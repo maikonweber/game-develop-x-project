@@ -12,6 +12,5 @@ fn App() -> Html {
 
 // We load "App" and render it.
 fn main() {
-    #[cfg(feature = "render")]
     yew::Renderer::<App>::new().render();
 }
