@@ -1,7 +1,7 @@
+use bevy::transform;
 use bevy::{prelude::*, render::camera::ScalingMode,
-input::keyboard::*,
 };
-
+use bevy::core_pipeline::clear_color::ClearColorConfig;
 
 fn main() {
     App::new()
@@ -9,6 +9,83 @@ fn main() {
         .add_startup_system(setup)
         .run();
 }
+
+
+
+
+#[derive(Component)]
+struct Health {
+    hp: f32,
+    extra: f32,
+}
+
+#[derive(Component)]
+struct PlayerXp(u32);
+
+#[derive(Component)]
+struct PlayerName(String);
+
+#[derive(Component)]
+struct MainMenuUi;
+
+
+#[derive(Component)]
+struct Enemy;
+
+#[derive(Component)]
+struct Player;
+
+
+#[derive(Component)]
+struct Friendly;
+
+
+#[derive(Bundle)]
+
+
+
+
+
+struct PlayerBundle {
+    xp : PlayerXp,
+    name: PlayerName, 
+    health: Health,
+    _p : Player,
+}
+
+
+
+
+
+#[derive(Resource, Default, Debug)]
+struct StartingLevel(usize);
+
+
+
+fn check_zero_health (
+    mut query: Query<(&Health, &mut Transform, Option<&Player>)>,
+) {
+    for (health , mut transform, player) in query.iter_mut() {
+        eprintln!("Entity at {} has {} HP.", transform.translation, health.hp);
+    
+    if health.hp <= 0.0 {
+        transform.translation = Vec3::ZERO;
+    }
+
+    if let Some(player) = player {
+
+    }
+}
+}
+
+fn query_player(mut q: Query<(&Player, &mut Transform)>) {
+    let (player, mut transform) = q.single_mut();
+
+    
+    // do something with the player and its transform
+}
+
+
 
 /// set up a simple 3D scene
 fn setup(
@@ -18,6 +95,10 @@ fn setup(
 ) {
     // camera
     commands.spawn(Camera3dBundle {
+        camera_3d: Camera3d {
+            clear_color: ClearColorConfig::Custom(Color::rgb(0.8, 0.4, 0.2)),
+            ..Default::default()
+        },
         projection: OrthographicProjection {
             scale: 3.0,
             scaling_mode: ScalingMode::FixedVertical(2.0),
@@ -30,7 +111,7 @@ fn setup(
 
     // plane
     commands.spawn(PbrBundle {
-        mesh: meshes.add(Mesh::from(shape::Plane { size: 5.0 })),
+        mesh: meshes.add(Mesh::from(shape::Plane { size: 15.0 })),
         material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
         ..default()
     });
@@ -67,54 +148,3 @@ fn setup(
 }
 
 
-fn keyboard_input(keys: Res<Input<KeyCode>>) {
-    if keys.just_pressed((KeyCode::Space)) {}
-    if keys.just_pressed((KeyCode::LControl)) {}
-    if keys.pressed(KeyCode::W) {}
-}
-
-
-fn keyboard_events(
-    mut key_evr: EventReader<KeyboardInput>,
-) {
-    use bevy::input::ButtonState;
-
-    for ev in key_evr.iter() {
-        match ev.state {
-            ButtonState::Pressed => {
-                println!("Key press: {:?} ({})", ev.key_code, ev.scan_code);
-            }
-            ButtonState::Released => {
-                println!("Key release: {:?} ({})", ev.key_code, ev.scan_code);
-            }
-        }
-    }
-}
-
-
-fn mouse_button_input(
-    buttons: Res<Input<MouseButton>>,
-) {
-    if buttons.just_pressed(MouseButton::Left) {
-        // Left button was pressed
-    }
-    if buttons.just_released(MouseButton::Left) {
-        // Left Button was released
-    }
-    if buttons.pressed(MouseButton::Right) {
-        // Right Button is being held down
-    }
-    // we can check multiple at once with `.any_*`
-    if buttons.any_just_pressed([MouseButton::Left, MouseButton::Right]) {
-        // Either the left or the right button was just pressed
-    }
-}
-
-
-fn mouse_motion(
-    mut motion_evr: EventReader<MouseMotion>,
-) {
-    for ev in motion_evr.iter() {
-        println!("Mouse moved: X: {} px, Y: {} px", ev.delta.x, ev.delta.y);
-    }
-}
