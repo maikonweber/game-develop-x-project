@@ -1,11 +1,36 @@
 use yew::prelude::*;
+use stylist::{css, Style};
+use yew::prelude::*;
 
 
 #[function_component]
 fn App() -> Html {
+    
+    let s = css!(
+        r#"
+            color : ${color};
+            span, ${sel_div} {
+                background-color: blue;
+
+            }
+
+
+            @media screen and ${breakpoint} {
+                display: flex;
+
+            }
+        "#,
+        color = "red",
+        sel_div = "div.selected",
+        breakpoint = "(max-width: 500px)",
+    );
+
+    let style = Style::new(s).expect("msg");
+
     return html! {
+
         <>
-        <div> { "Hello Word" } </div>
+        <div class={style}> {"Hello Word"} </div>
         </>
     };
 }
