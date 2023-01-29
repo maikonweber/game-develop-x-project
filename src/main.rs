@@ -1,41 +1,65 @@
-#[allow(unused)]
 
-use bevy::prelude::*;
-use bevy::{prelude::Commands, input::InputPlugin};
-
-
-#[derive(Component)]
-
-struct Person;
-
-struct Name(String);
-
+use bevy::{prelude::*, render::camera::ScalingMode};
 
 fn main() {
     App::new()
-    .add_plugins(DefaultPlugins.set(WindowPlugin {
-        window: WindowDescriptor {
-            title: "I am a Window".to_string(),
-            width: 1200.0,
-            height: 1600.0,
+        .add_plugins(DefaultPlugins)
+        .add_startup_system(setup)
+        .run();
+}
+
+/// set up a simple 3D scene
+fn setup(
+    mut commands: Commands,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<StandardMaterial>>,
+) {
+    // camera
+    commands.spawn(Camera3dBundle {
+        projection: OrthographicProjection {
+            scale: 3.0,
+            scaling_mode: ScalingMode::FixedVertical(2.0),
             ..default()
-        },
+        }
+        .into(),
+        transform: Transform::from_xyz(5.0, 5.0, 5.0).looking_at(Vec3::ZERO, Vec3::Y),
         ..default()
-    }))
-    .add_startup_system(add_people)
-    .add_system(hello_word)
-    .run();   
+    });
+
+    // plane
+    commands.spawn(PbrBundle {
+        mesh: meshes.add(Mesh::from(shape::Plane { size: 5.0 })),
+        material: materials.add(Color::rgb(0.3, 0.5, 0.3).into()),
+        ..default()
+    });
+    // cubes
+    commands.spawn(PbrBundle {
+        mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
+        material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
+        transform: Transform::from_xyz(1.5, 0.5, 1.5),
+        ..default()
+    });
+    commands.spawn(PbrBundle {
+        mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
+        material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
+        transform: Transform::from_xyz(1.5, 0.5, -1.5),
+        ..default()
+    });
+    commands.spawn(PbrBundle {
+        mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
+        material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
+        transform: Transform::from_xyz(-1.5, 0.5, 1.5),
+        ..default()
+    });
+    commands.spawn(PbrBundle {
+        mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
+        material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
+        transform: Transform::from_xyz(-1.5, 0.5, -1.5),
+        ..default()
+    });
+    // light
+    commands.spawn(PointLightBundle {
+        transform: Transform::from_xyz(3.0, 8.0, 5.0),
+        ..default()
+    });
 }
-
-
-fn hello_word() {
-    println!("Hello Word")
-}
-
-
-fn add_people (mut commands: Commands) {
-    commands.spawn(Person);
-}
-
-
-
