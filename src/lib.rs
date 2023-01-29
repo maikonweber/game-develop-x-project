@@ -1,5 +1,5 @@
 use async_net::{
-    AsyncToSocketAddrs, TcpListener, TcpStream}
+    AsyncToSocketAddrs, TcpListener, TcpStream};
     use async_tungstenite::tungstenite::Message;
     use async_tungstenite::WebSocketStream;
     use bevy::prelude::Component;
@@ -12,10 +12,10 @@ use async_net::{
 
     impl Plugin for WsPlugin {
         fn build(&self, app: &mut App) {
-            let task_pool = IoTaskPool(app.word.resource::<IoTaskPool>.0.clone());
+            let task_pool = IoTaskPool(app.world.resource::<IoTaskPool>().0.clone());
             let (ws_tx, es_rx) = crossbeam_channel::unbounded();
-            app.insert_resource(WsListener::new(task_pool, ws_tx))
-            app.insert_resource(WsAcceptQueue { ws_rs})
+            app.insert_resource(WsListener::new(task_pool, ws_tx));
+            app.insert_resource(WsAcceptQueue { ws_rs })
                 .add_system(accept_ws_from_queue);
         }
 
@@ -27,7 +27,7 @@ use async_net::{
     }
 
     pub struct WsAcceptQueue {
-        wx_rx : Receiver<WebSocketStream><TcpStream>>
+        wx_rx : Receiver<WebSocketStream<TcpStream>>
     }
 
     impl WsListener {
@@ -109,13 +109,13 @@ pub fn accept_ws_from_queue(
                 let mut from_channel = io_message_rx.recv().fuse();
                 let mut from_ws = websocket.next().fuse();
                 select! {
-                    message = from_channel => if let  Ok((message) = message {
+                    message = from_channel => if let Ok(message) = message {
                         let _ = websocket.send(message).await;
                     } else {
                         break;
                     }, 
-                    message = from_ws => if let Some(Ok (message)) = message {
-                        let _ = io_message_tx_send(message).await
+                    message = from_ws => if let Some(Ok(message)) = message {
+                        let _ = io_message_tx_send(message).await;
                     } else {
                         break;
                     },
@@ -123,6 +123,7 @@ pub fn accept_ws_from_queue(
                 }
             }
         });
+
         commands.spawn().insert(WsConnection {
             _io : io,
             sender: message_tx,
