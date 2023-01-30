@@ -12,6 +12,10 @@ fn main() {
 
 
 
+#[derive(Component)]
+struct Uiplugin {
+    
+}
 
 #[derive(Component)]
 struct Health {
