@@ -2,7 +2,6 @@ use yew::prelude::*;
 use stylist::{css, Style};
 use yew::prelude::*;
 
-
 #[function_component]
 fn App() -> Html {
     
@@ -49,3 +48,5 @@ fn App() -> Html {
 fn main() {
     yew::Renderer::<App>::new().render();
 }
+
+
