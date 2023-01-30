@@ -8,19 +8,26 @@ fn App() -> Html {
     
     let s = css!(
         r#"
+            width: 100%;
+            background-color: red;
+            height: 75px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
             color : ${color};
             span, ${sel_div} {
                 background-color: blue;
 
             }
 
-
+        
             @media screen and ${breakpoint} {
                 display: flex;
 
             }
         "#,
-        color = "red",
+        color = "black",
         sel_div = "div.selected",
         breakpoint = "(max-width: 500px)",
     );
@@ -30,7 +37,10 @@ fn App() -> Html {
     return html! {
 
         <>
-        <div class={style}> {"Hello Word"} </div>
+      
+        <div class={style}> { "Hello Word"} 
+        </div>
+
         </>
     };
 }
