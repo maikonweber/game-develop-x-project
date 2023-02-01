@@ -4,100 +4,40 @@ use bevy::{prelude::*, render::camera::ScalingMode,
 use bevy::core_pipeline::clear_color::ClearColorConfig;
 
 fn main() {
+
+
     App::new()
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            window : WindowDescriptor { 
+                fit_canvas_to_parent: true,
+                ..default()
+             },
+             ..default()
+            })
+        )
         .add_startup_system(setup)
+        .add_startup_system(spawn_player)
         .run();
 }
 
 
-
-#[derive(Component)]
-struct Uiplugin {
-    
-}
-
-#[derive(Component)]
-struct Health {
-    hp: f32,
-    extra: f32,
-}
-
-#[derive(Component)]
-struct PlayerXp(u32);
-
-#[derive(Component)]
-struct PlayerName(String);
-
-#[derive(Component)]
-struct MainMenuUi;
-
-
-#[derive(Component)]
-struct Enemy;
-
-#[derive(Component)]
-struct Player;
-
-
-#[derive(Component)]
-struct Friendly;
-
-
-#[derive(Bundle)]
-
-
-
-
-
-struct PlayerBundle {
-    xp : PlayerXp,
-    name: PlayerName, 
-    health: Health,
-    _p : Player,
+fn spawn_player (mut commands: Commands, mut meshes: ResMut<Assets<Mesh>>, mut materials: ResMut<Assets<StandardMaterial>>) {
+    commands.spawn(PbrBundle {
+        mesh: meshes.add(Mesh::from(shape::Icosphere { radius: 0.5, subdivisions: 60})),
+        material: materials.add(Color::rgb(1.8, 0.7, 0.6).into()),
+        transform: Transform::from_xyz(3.5, 0.5, 1.5),
+        ..default()
+    });
 }
 
 
-
-
-
-#[derive(Resource, Default, Debug)]
-struct StartingLevel(usize);
-
-
-
-fn check_zero_health (
-    mut query: Query<(&Health, &mut Transform, Option<&Player>)>,
-) {
-    for (health , mut transform, player) in query.iter_mut() {
-        eprintln!("Entity at {} has {} HP.", transform.translation, health.hp);
-    
-    if health.hp <= 0.0 {
-        transform.translation = Vec3::ZERO;
-    }
-
-    if let Some(player) = player {
-
-    }
-}
-}
-
-fn query_player(mut q: Query<(&Player, &mut Transform)>) {
-    let (player, mut transform) = q.single_mut();
-
-    
-    // do something with the player and its transform
-}
-
-
-
-/// set up a simple 3D scene
-fn setup(
+pub fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<StandardMaterial>>,
 ) {
-    // camera
+    // camer
+
     commands.spawn(Camera3dBundle {
         camera_3d: Camera3d {
             clear_color: ClearColorConfig::Custom(Color::rgb(0.8, 0.4, 0.2)),
@@ -129,7 +69,7 @@ fn setup(
     commands.spawn(PbrBundle {
         mesh: meshes.add(Mesh::from(shape::Cube { size: 1.0 })),
         material: materials.add(Color::rgb(0.8, 0.7, 0.6).into()),
-        transform: Transform::from_xyz(1.5, 0.5, -1.5),
+        transform: Transform::from_xyz(3.0, 0.5, -1.5),
         ..default()
     });
     commands.spawn(PbrBundle {
