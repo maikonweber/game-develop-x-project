@@ -35,14 +35,7 @@ fn moviment_ball(mut positions: Query<(&PlayerBall, &mut Transform)>) {
 fn main() {
 
     App::new()
-        .add_plugins(DefaultPlugins.set(WindowPlugin {
-            window : WindowDescriptor { 
-                fit_canvas_to_parent: true,
-                ..default()
-             },
-             ..default()
-            })
-        )
+        .add_plugins(DefaultPlugins)
         .add_startup_system(setup)
         .add_startup_system(spawn_player)
         .add_startup_system(moviment_ball)
